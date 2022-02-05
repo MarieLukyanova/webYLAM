@@ -73,6 +73,29 @@ class Example(QWidget):
             self.getImage()
             self.pixmap = QPixmap(self.map_file)
             self.image.setPixmap(self.pixmap)
+        if event.key() == 16777234:
+            self.x -= 0.01
+            self.getImage()
+            self.pixmap = QPixmap(self.map_file)
+            self.image.setPixmap(self.pixmap)
+        if event.key() == 16777236:
+            self.x += 0.01
+            self.getImage()
+            self.pixmap = QPixmap(self.map_file)
+            self.image.setPixmap(self.pixmap)
+        if event.key() == 16777249:
+            #Up - Ctrl
+            self.y += 0.01
+            self.getImage()
+            self.pixmap = QPixmap(self.map_file)
+            self.image.setPixmap(self.pixmap)
+        if event.key() == 16777248:
+            #Down - Shift
+            self.y -= 0.01
+            self.getImage()
+            self.pixmap = QPixmap(self.map_file)
+            self.image.setPixmap(self.pixmap)
+
 
 
 if __name__ == '__main__':
