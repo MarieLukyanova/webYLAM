@@ -22,13 +22,11 @@ class Example(QWidget):
     def getImage(self):
         map_request = f"https://static-maps.yandex.ru/1.x/?ll={self.x},{self.y}&size=450,450&z={self.z}&l=map"
         response = requests.get(map_request)
-
         if not response:
             print("Ошибка выполнения запроса:")
             print(map_request)
             print("Http статус:", response.status_code, "(", response.reason, ")")
             sys.exit(1)
-
         self.map_file = "map.png"
         with open(self.map_file, "wb") as file:
             file.write(response.content)
