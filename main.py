@@ -1,7 +1,7 @@
 import os
 import sys
 
-import pygame
+
 import requests
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
@@ -73,25 +73,23 @@ class Example(QWidget):
             self.getImage()
             self.pixmap = QPixmap(self.map_file)
             self.image.setPixmap(self.pixmap)
-        if event.key() == 16777234:
-            self.x -= 0.01
-            self.getImage()
-            self.pixmap = QPixmap(self.map_file)
-            self.image.setPixmap(self.pixmap)
-        if event.key() == 16777236:
+        if event.key() == Qt.Key_A:
             self.x += 0.01
             self.getImage()
             self.pixmap = QPixmap(self.map_file)
             self.image.setPixmap(self.pixmap)
-        if event.key() == 16777249:
-            #Up - Ctrl
-            self.y += 0.01
+        if event.key() == Qt.Key_D:
+            self.x -= 0.01
             self.getImage()
             self.pixmap = QPixmap(self.map_file)
             self.image.setPixmap(self.pixmap)
-        if event.key() == 16777248:
-            #Down - Shift
+        if event.key() == Qt.Key_W:
             self.y -= 0.01
+            self.getImage()
+            self.pixmap = QPixmap(self.map_file)
+            self.image.setPixmap(self.pixmap)
+        if event.key() == Qt.Key_S:
+            self.y += 0.01
             self.getImage()
             self.pixmap = QPixmap(self.map_file)
             self.image.setPixmap(self.pixmap)
