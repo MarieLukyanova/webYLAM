@@ -1,8 +1,9 @@
 import os
 import sys
+
 import pygame
 import requests
-from PyQt5 import Qt
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QLineEdit
 
@@ -53,20 +54,26 @@ class Example(QWidget):
     def getcoord(self):
         self.x, self.y = self.edit_x.text(), self.edit_y.text()
         self.getImage()
+        self.pixmap = QPixmap(self.map_file)
+        self.image.setPixmap(self.pixmap)
 
     def closeEvent(self, event):
         os.remove(self.map_file)
 
     def keyPressEvent(self, event):
-        for event in pygame.event.get():
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_RIGHT]:
-                if event.key() == Qt.Key_PageUp:
-                    if self.z != 18:
-                        self.z += 1
-                elif event.key() == Qt.Key_PageUp:
-                    if self.z != 0:
-                        self.z -= 1
+        if event.key() == 16777235:
+            if self.z != 17:
+                self.z += 1
+            self.getImage()
+            self.pixmap = QPixmap(self.map_file)
+            self.image.setPixmap(self.pixmap)
+        if event.key() == 16777237:
+            if self.z != 0:
+                self.z -= 1
+            self.getImage()
+            self.pixmap = QPixmap(self.map_file)
+            self.image.setPixmap(self.pixmap)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
