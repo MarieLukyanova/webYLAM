@@ -80,5 +80,3 @@ if __name__ == '__main__':
     ex = Example()
     ex.show()
     sys.exit(app.exec())
-
-
