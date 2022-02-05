@@ -1,7 +1,8 @@
 import os
 import sys
-
+import pygame
 import requests
+from PyQt5 import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QLineEdit
 
@@ -12,12 +13,13 @@ SCREEN_SIZE = [450, 600]
 class Example(QWidget):
     def __init__(self):
         super().__init__()
+        self.x, self.y = 37.620070, 55.753630
+        self.z = 13
         self.getImage()
         self.initUI()
-        self.x, self.y = 37.620070, 55.753630
 
     def getImage(self):
-        map_request = f"https://static-maps.yandex.ru/1.x/?ll={self.x},{self.y}&size=450,450&z=13&l=map"
+        map_request = f"https://static-maps.yandex.ru/1.x/?ll={self.x},{self.y}&size=450,450&z={self.z}&l=map"
         response = requests.get(map_request)
 
         if not response:
@@ -55,6 +57,16 @@ class Example(QWidget):
     def closeEvent(self, event):
         os.remove(self.map_file)
 
+    def keyPressEvent(self, event):
+        for event in pygame.event.get():
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_RIGHT]:
+                if event.key() == Qt.Key_PageUp:
+                    if self.z != 18:
+                        self.z += 1
+                elif event.key() == Qt.Key_PageUp:
+                    if self.z != 0:
+                        self.z -= 1
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
