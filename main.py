@@ -66,6 +66,7 @@ class Example(QWidget):
             self.getImage()
             self.pixmap = QPixmap(self.map_file)
             self.image.setPixmap(self.pixmap)
+
         if event.key() == 16777237:
             if self.z != 0:
                 self.z -= 1
