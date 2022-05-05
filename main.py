@@ -60,6 +60,7 @@ class Example(QWidget):
         self.image.setPixmap(self.pixmap)
 
     def map_layer(self):
+
         if self.type == 'map':
             self.type = 'sat'
             self.btn_type.setText('Спутник')
