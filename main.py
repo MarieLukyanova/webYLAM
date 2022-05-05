@@ -2,6 +2,7 @@ import os
 import sys
 
 import requests
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QLineEdit
 
@@ -12,12 +13,13 @@ SCREEN_SIZE = [450, 600]
 class Example(QWidget):
     def __init__(self):
         super().__init__()
+        self.x, self.y = 37.620070, 55.753630
+        self.z = 13
         self.getImage()
         self.initUI()
-        self.x, self.y = 37.620070, 55.753630
 
     def getImage(self):
-        map_request = f"https://static-maps.yandex.ru/1.x/?ll={self.x},{self.y}&size=450,450&z=13&l=map"
+        map_request = f"https://static-maps.yandex.ru/1.x/?ll={self.x},{self.y}&size=450,450&z={self.z}&l=map"
         response = requests.get(map_request)
 
         if not response:
@@ -51,9 +53,48 @@ class Example(QWidget):
     def getcoord(self):
         self.x, self.y = self.edit_x.text(), self.edit_y.text()
         self.getImage()
+        self.pixmap = QPixmap(self.map_file)
+        self.image.setPixmap(self.pixmap)
 
     def closeEvent(self, event):
         os.remove(self.map_file)
+
+    def keyPressEvent(self, event):
+        if event.key() == 16777235:
+            if self.z != 17:
+                self.z += 1
+            self.getImage()
+            self.pixmap = QPixmap(self.map_file)
+            self.image.setPixmap(self.pixmap)
+        if event.key() == 16777237:
+            if self.z != 0:
+                self.z -= 1
+            self.getImage()
+            self.pixmap = QPixmap(self.map_file)
+            self.image.setPixmap(self.pixmap)
+        if event.key() == 16777234:
+            self.x -= 0.01
+            self.getImage()
+            self.pixmap = QPixmap(self.map_file)
+            self.image.setPixmap(self.pixmap)
+        if event.key() == 16777236:
+            self.x += 0.01
+            self.getImage()
+            self.pixmap = QPixmap(self.map_file)
+            self.image.setPixmap(self.pixmap)
+        if event.key() == Qt.Key_S:
+            #Up - Ctrl
+            self.y += 0.01
+            self.getImage()
+            self.pixmap = QPixmap(self.map_file)
+            self.image.setPixmap(self.pixmap)
+        if event.key() == Qt.Key_D:
+            #Down - Shift
+            self.y -= 0.01
+            self.getImage()
+            self.pixmap = QPixmap(self.map_file)
+            self.image.setPixmap(self.pixmap)
+
 
 
 if __name__ == '__main__':
@@ -61,5 +102,3 @@ if __name__ == '__main__':
     ex = Example()
     ex.show()
     sys.exit(app.exec())
-
-
