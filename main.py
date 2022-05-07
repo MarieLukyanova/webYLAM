@@ -6,7 +6,7 @@ import json
 import requests
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QLineEdit
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QLineEdit, QCheckBox
 
 
 SCREEN_SIZE = [600, 610]
@@ -19,6 +19,7 @@ class Example(QWidget):
         self.z = 10
         self.type = 'map'
         self.metka = ''
+        self.ind_post = ''
         self.getImage()
         self.initUI()
 
@@ -53,15 +54,18 @@ class Example(QWidget):
         self.edit_adress.move(325, 470)
         self.edit_adress.resize(250, 24)
         self.btn_adress = QPushButton('Искать', self)
-        self.btn_adress.move(400, 500)
+        self.btn_adress.move(325, 500)
         self.btn_adress.clicked.connect(self.search)
         self.btn_back = QPushButton('Сбросить', self)
-        self.btn_back.move(400, 580)
+        self.btn_back.move(425, 500)
         self.btn_back.clicked.connect(self.throw_off)
         self.adress = QLineEdit(self)
         self.adress.move(250, 547)
         self.adress.resize(345, 24)
         self.adress.setReadOnly(True)
+        self.post_ind = QCheckBox('Почтовый индекс', self)
+        self.post_ind.move(325, 575)
+        self.post_ind.stateChanged.connect(self.post)
         self.pixmap = QPixmap(self.map_file)
         self.image = QLabel(self)
         self.image.move(0, 0)
@@ -70,6 +74,7 @@ class Example(QWidget):
 
     def getcoord(self):
         self.x, self.y = self.edit_x.text(), self.edit_y.text()
+        self.ind_post = ''
         self.edit_adress.clear()
         self.adress.clear()
         self.getImage()
@@ -98,9 +103,12 @@ class Example(QWidget):
             jj = json.loads(response.content.decode())
             self.x = jj['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split()[0]
             self.y = jj['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split()[1]
-            adress = jj['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']
+            adress = jj['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['Address']['formatted']
             self.z = 13
             self.metka = '&pt=' + str(self.x) + ',' + str(self.y)
+            if self.post_ind.checkState():
+                self.ind_post = ', ' + jj['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['Address']['postal_code']
+
         else:
             print('Ошибка запроса: ')
             print(response)
@@ -109,6 +117,7 @@ class Example(QWidget):
         self.getImage()
         self.pixmap = QPixmap(self.map_file)
         self.image.setPixmap(self.pixmap)
+        adress += self.ind_post
         self.adress.setText(adress)
 
     def throw_off(self):
@@ -116,9 +125,14 @@ class Example(QWidget):
         self.metka = ''
         self.edit_adress.clear()
         self.adress.clear()
+        self.ind_post = ''
         self.getImage()
         self.pixmap = QPixmap(self.map_file)
         self.image.setPixmap(self.pixmap)
+
+    def post(self):
+        if self.edit_adress.text() != '':
+            self.search()
 
     def closeEvent(self, event):
         os.remove(self.map_file)
