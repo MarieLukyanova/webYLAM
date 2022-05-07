@@ -18,11 +18,12 @@ class Example(QWidget):
         self.x, self.y = 37.6200, 55.7536
         self.z = 13
         self.type = 'map'
+        self.metka = ''
         self.getImage()
         self.initUI()
 
     def getImage(self):
-        map_request =f"https://static-maps.yandex.ru/1.x/?ll={self.x},{self.y}&size=600,450&z={self.z}&l={self.type}"
+        map_request =f"https://static-maps.yandex.ru/1.x/?ll={self.x},{self.y}{self.metka}&size=600,450&z={self.z}&l={self.type}"
         response = requests.get(map_request)
         if not response:
             print("Ошибка выполнения запроса:")
@@ -89,6 +90,7 @@ class Example(QWidget):
             self.x = jj['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split()[0]
             self.y = jj['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split()[1]
             self.z = 13
+            self.metka = '&pt=' + str(self.x) + ',' + str(self.y)
         else:
             print('Ошибка запроса: ')
             print(response)
