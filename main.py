@@ -107,7 +107,6 @@ class Example(QWidget):
             self.metka = '&pt=' + str(self.x) + ',' + str(self.y)
             if self.post_ind.checkState():
                 self.ind_post = ', ' + jj['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['Address']['postal_code']
-
         else:
             print('Ошибка запроса: ')
             print(response)
