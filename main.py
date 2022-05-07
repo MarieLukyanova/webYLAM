@@ -9,14 +9,14 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QLineEdit
 
 
-SCREEN_SIZE = [600, 600]
+SCREEN_SIZE = [600, 610]
 
 
 class Example(QWidget):
     def __init__(self):
         super().__init__()
         self.x, self.y = 37.6200, 55.7536
-        self.z = 13
+        self.z = 10
         self.type = 'map'
         self.metka = ''
         self.getImage()
@@ -56,8 +56,12 @@ class Example(QWidget):
         self.btn_adress.move(400, 500)
         self.btn_adress.clicked.connect(self.search)
         self.btn_back = QPushButton('Сбросить', self)
-        self.btn_back.move(400, 550)
+        self.btn_back.move(400, 580)
         self.btn_back.clicked.connect(self.throw_off)
+        self.adress = QLineEdit(self)
+        self.adress.move(250, 547)
+        self.adress.resize(345, 24)
+        self.adress.setReadOnly(True)
         self.pixmap = QPixmap(self.map_file)
         self.image = QLabel(self)
         self.image.move(0, 0)
@@ -66,6 +70,8 @@ class Example(QWidget):
 
     def getcoord(self):
         self.x, self.y = self.edit_x.text(), self.edit_y.text()
+        self.edit_adress.clear()
+        self.adress.clear()
         self.getImage()
         self.pixmap = QPixmap(self.map_file)
         self.image.setPixmap(self.pixmap)
@@ -92,6 +98,7 @@ class Example(QWidget):
             jj = json.loads(response.content.decode())
             self.x = jj['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split()[0]
             self.y = jj['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split()[1]
+            adress = jj['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']
             self.z = 13
             self.metka = '&pt=' + str(self.x) + ',' + str(self.y)
         else:
@@ -102,10 +109,13 @@ class Example(QWidget):
         self.getImage()
         self.pixmap = QPixmap(self.map_file)
         self.image.setPixmap(self.pixmap)
+        self.adress.setText(adress)
 
     def throw_off(self):
         self.x, self.y = 37.6200, 55.7536
         self.metka = ''
+        self.edit_adress.clear()
+        self.adress.clear()
         self.getImage()
         self.pixmap = QPixmap(self.map_file)
         self.image.setPixmap(self.pixmap)
