@@ -1,6 +1,7 @@
 import os
 import sys
 
+
 import requests
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
@@ -15,19 +16,18 @@ class Example(QWidget):
         super().__init__()
         self.x, self.y = 37.620070, 55.753630
         self.z = 13
+        self.type = 'map'
         self.getImage()
         self.initUI()
 
     def getImage(self):
-        map_request = f"https://static-maps.yandex.ru/1.x/?ll={self.x},{self.y}&size=450,450&z={self.z}&l=map"
+        map_request = f"https://static-maps.yandex.ru/1.x/?ll={self.x},{self.y}&size=450,450&z={self.z}&l={self.type}"
         response = requests.get(map_request)
-
         if not response:
             print("Ошибка выполнения запроса:")
             print(map_request)
             print("Http статус:", response.status_code, "(", response.reason, ")")
             sys.exit(1)
-
         self.map_file = "map.png"
         with open(self.map_file, "wb") as file:
             file.write(response.content)
@@ -40,6 +40,9 @@ class Example(QWidget):
         self.btn.move(70, 500)
         self.btn.resize(140, 30)
         self.btn.clicked.connect(self.getcoord)
+        self.btn_type = QPushButton('Схема', self)
+        self.btn_type.move(70, 550)
+        self.btn_type.clicked.connect(self.map_layer)
         self.edit_x = QLineEdit(self)
         self.edit_x.move(10, 470)
         self.edit_y = QLineEdit(self)
@@ -56,6 +59,20 @@ class Example(QWidget):
         self.pixmap = QPixmap(self.map_file)
         self.image.setPixmap(self.pixmap)
 
+    def map_layer(self):
+        if self.type == 'map':
+            self.type = 'sat'
+            self.btn_type.setText('Спутник')
+        elif self.type == 'sat':
+            self.type = 'skl'
+            self.btn_type.setText('Гибрид')
+        else:
+            self.type = 'map'
+            self.btn_type.setText('Схема')
+        self.getImage()
+        self.pixmap = QPixmap(self.map_file)
+        self.image.setPixmap(self.pixmap)
+
     def closeEvent(self, event):
         os.remove(self.map_file)
 
@@ -66,36 +83,32 @@ class Example(QWidget):
             self.getImage()
             self.pixmap = QPixmap(self.map_file)
             self.image.setPixmap(self.pixmap)
-
         if event.key() == 16777237:
             if self.z != 0:
                 self.z -= 1
             self.getImage()
             self.pixmap = QPixmap(self.map_file)
             self.image.setPixmap(self.pixmap)
-        if event.key() == 16777234:
-            self.x -= 0.01
-            self.getImage()
-            self.pixmap = QPixmap(self.map_file)
-            self.image.setPixmap(self.pixmap)
-        if event.key() == 16777236:
+        if event.key() == Qt.Key_A:
             self.x += 0.01
             self.getImage()
             self.pixmap = QPixmap(self.map_file)
             self.image.setPixmap(self.pixmap)
-        if event.key() == Qt.Key_S:
-            #Up - Ctrl
-            self.y += 0.01
+        if event.key() == Qt.Key_D:
+            self.x -= 0.01
             self.getImage()
             self.pixmap = QPixmap(self.map_file)
             self.image.setPixmap(self.pixmap)
-        if event.key() == Qt.Key_D:
-            #Down - Shift
+        if event.key() == Qt.Key_W:
             self.y -= 0.01
             self.getImage()
             self.pixmap = QPixmap(self.map_file)
             self.image.setPixmap(self.pixmap)
-
+        if event.key() == Qt.Key_S:
+            self.y += 0.01
+            self.getImage()
+            self.pixmap = QPixmap(self.map_file)
+            self.image.setPixmap(self.pixmap)
 
 
 if __name__ == '__main__':
