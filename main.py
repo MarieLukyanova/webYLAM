@@ -38,7 +38,6 @@ class Example(QWidget):
     def initUI(self):
         self.setGeometry(600, 250, *SCREEN_SIZE)
         self.setWindowTitle('Отображение карты')
-
         self.btn = QPushButton('Добавить координаты', self)
         self.btn.move(70, 500)
         self.btn.resize(140, 30)
