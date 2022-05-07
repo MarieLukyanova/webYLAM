@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 
 
 import requests
@@ -8,20 +9,20 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QLineEdit
 
 
-SCREEN_SIZE = [450, 600]
+SCREEN_SIZE = [600, 600]
 
 
 class Example(QWidget):
     def __init__(self):
         super().__init__()
-        self.x, self.y = 37.620070, 55.753630
+        self.x, self.y = 37.6200, 55.7536
         self.z = 13
         self.type = 'map'
         self.getImage()
         self.initUI()
 
     def getImage(self):
-        map_request = f"https://static-maps.yandex.ru/1.x/?ll={self.x},{self.y}&size=450,450&z={self.z}&l={self.type}"
+        map_request =f"https://static-maps.yandex.ru/1.x/?ll={self.x},{self.y}&size=600,450&z={self.z}&l={self.type}"
         response = requests.get(map_request)
         if not response:
             print("Ошибка выполнения запроса:")
@@ -47,10 +48,16 @@ class Example(QWidget):
         self.edit_x.move(10, 470)
         self.edit_y = QLineEdit(self)
         self.edit_y.move(160, 470)
+        self.edit_adress = QLineEdit(self)
+        self.edit_adress.move(325, 470)
+        self.edit_adress.resize(250, 24)
+        self.btn_adress = QPushButton('Искать', self)
+        self.btn_adress.move(400, 500)
+        self.btn_adress.clicked.connect(self.search)
         self.pixmap = QPixmap(self.map_file)
         self.image = QLabel(self)
         self.image.move(0, 0)
-        self.image.resize(450, 450)
+        self.image.resize(600, 450)
         self.image.setPixmap(self.pixmap)
 
     def getcoord(self):
@@ -69,6 +76,24 @@ class Example(QWidget):
         else:
             self.type = 'map'
             self.btn_type.setText('Схема')
+        self.getImage()
+        self.pixmap = QPixmap(self.map_file)
+        self.image.setPixmap(self.pixmap)
+
+    def search(self):
+        adress = '+'.join(self.edit_adress.text().split())
+        response = requests.get(
+            f'https://geocode-maps.yandex.ru/1.x/?apikey=40d1649f-0493-4b70-98ba-98533de7710b&geocode={adress}&format=json')
+        if response:
+            jj = json.loads(response.content.decode())
+            self.x = jj['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split()[0]
+            self.y = jj['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split()[1]
+            self.z = 13
+        else:
+            print('Ошибка запроса: ')
+            print(response)
+            print('HHTP статус: ', response.status_code, "(", response.reason, ')')
+            sys.exit(0)
         self.getImage()
         self.pixmap = QPixmap(self.map_file)
         self.image.setPixmap(self.pixmap)
