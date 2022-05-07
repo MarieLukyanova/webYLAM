@@ -55,6 +55,9 @@ class Example(QWidget):
         self.btn_adress = QPushButton('Искать', self)
         self.btn_adress.move(400, 500)
         self.btn_adress.clicked.connect(self.search)
+        self.btn_back = QPushButton('Сбросить', self)
+        self.btn_back.move(400, 550)
+        self.btn_back.clicked.connect(self.throw_off)
         self.pixmap = QPixmap(self.map_file)
         self.image = QLabel(self)
         self.image.move(0, 0)
@@ -96,6 +99,13 @@ class Example(QWidget):
             print(response)
             print('HHTP статус: ', response.status_code, "(", response.reason, ')')
             sys.exit(0)
+        self.getImage()
+        self.pixmap = QPixmap(self.map_file)
+        self.image.setPixmap(self.pixmap)
+
+    def throw_off(self):
+        self.x, self.y = 37.6200, 55.7536
+        self.metka = ''
         self.getImage()
         self.pixmap = QPixmap(self.map_file)
         self.image.setPixmap(self.pixmap)
